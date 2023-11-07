@@ -41,18 +41,24 @@ else:
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
             full_response = ""
-            for response in openai.chat.completions.create(
-                model=st.session_state["openai_model"],
-                messages=[
+
+            from openai import OpenAI
+            client = OpenAI()
+
+            response = client.chat.completions.create(
+              model=st.session_state["openai_model"],
+              messages=[
                     {"role": m["role"], "content": m["content"]}
                     for m in st.session_state.messages
                 ],
-                stream=True,
-            ):
-                full_response += response['choices'][0]['message']['content']
+            stream=True,
+            )
 
-                # response.choices[0].message.get("content", "")
-                message_placeholder.markdown(full_response + "▌")
+            
+            full_response += response['choices'][0]['message']['content']
+
+            # response.choices[0].message.get("content", "")
+            message_placeholder.markdown(full_response + "▌")
             message_placeholder.markdown(full_response)
         st.session_state.messages.append(
             {"role": "assistant", "content": full_response}
