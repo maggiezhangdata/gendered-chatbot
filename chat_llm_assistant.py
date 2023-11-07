@@ -15,15 +15,23 @@ if "show_thread_id" not in st.session_state:
     st.session_state.show_thread_id = False
 
 # Layout for Copy Thread ID button and Disclaimer
-col1, col2 = st.columns([2, 8])
-with col1:
+placeholder1, placeholder2 = st.columns([2, 8])
+
+# Creating placeholders
+button_placeholder = placeholder1.empty()
+expander_placeholder = placeholder2.empty()
+
+# Populating placeholders with the button and the expander
+with button_placeholder.container():
     if st.button("Copy Thread ID"):
         st.session_state.show_thread_id = True
-with col2:
+
+with expander_placeholder.container():
     with st.expander("ℹ️ Disclaimer"):
         st.caption(
             "We appreciate your engagement! Please note, this demo is designed to process a maximum of 10 interactions. Thank you for your understanding."
         )
+
 
 # Display the thread ID
 if st.session_state.show_thread_id:
