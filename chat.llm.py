@@ -16,7 +16,7 @@ client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 # Initialize or retrieve the OpenAI model in the session state
 if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "gpt-3.5-turbo"
+    st.session_state["openai_model"] = "gpt-4"
 
 # Initialize or retrieve the message history in the session state
 if "messages" not in st.session_state:
@@ -58,9 +58,8 @@ else:
                     for m in st.session_state.messages
                 ]
             )
-            print(response)
             # Extract the full response
-            full_response = response['choices'][0]['message']['content']
+            full_response = response.choices[0].message.content
             message_placeholder.markdown(full_response)
 
             # Append the assistant's response to the session state
