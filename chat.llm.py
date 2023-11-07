@@ -3,7 +3,7 @@ from openai import OpenAI
 import streamlit as st
 
 # Set the title of the app
-st.title("ChatGPT-like clone")
+st.title("A ChatBot That Really Listens to You")
 
 # Disclaimer expander
 with st.expander("ℹ️ Disclaimer"):
