@@ -34,32 +34,34 @@ if len(st.session_state.messages) >= max_messages:
 
 else:
     if prompt := st.chat_input("What is up?"):
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
 
-        with st.chat_message("assistant"):
-            message_placeholder = st.empty()
-            full_response = ""
+    with st.chat_message("assistant"):
+        message_placeholder = st.empty()
+        full_response = ""
 
-            from openai import OpenAI
-            client = OpenAI()
+        from openai import OpenAI
+        client = OpenAI()
 
-            response = client.chat.completions.create(
-              model=st.session_state["openai_model"],
-              messages=[
-                    {"role": m["role"], "content": m["content"]}
-                    for m in st.session_state.messages
-                ],
+        stream = client.chat.completions.create(
+            model=st.session_state["openai_model"],
+            messages=[
+                {"role": m["role"], "content": m["content"]}
+                for m in st.session_state.messages
+            ],
             stream=True,
-            )
+        )
 
-            
-            full_response += response['choices'][0]['message']['content']
+        for response in stream:
+            # Now iterating over each response in the stream
+            if 'choices' in response and response['choices']:
+                full_response += response['choices'][0]['message']['content']
 
-            # response.choices[0].message.get("content", "")
             message_placeholder.markdown(full_response + "▌")
-            message_placeholder.markdown(full_response)
+        message_placeholder.markdown(full_response)
         st.session_state.messages.append(
             {"role": "assistant", "content": full_response}
         )
+
