@@ -58,6 +58,7 @@ else:
                     for m in st.session_state.messages
                 ]
             )
+            print(response)
             # Extract the full response
             full_response = response['choices'][0]['message']['content']
             message_placeholder.markdown(full_response)
