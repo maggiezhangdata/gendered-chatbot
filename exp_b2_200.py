@@ -3,6 +3,15 @@ import streamlit as st
 import time
 import re  # Import regular expressions
 
+# Hide the footer
+hide_footer_style = """
+    <style>
+        .css-1lcbmhc {display: none;}
+    </style>
+"""
+st.markdown(hide_footer_style, unsafe_allow_html=True)
+
+
 st.title("真正倾听您说话的聊天机器人")
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 assistant_id = st.secrets["assistant_id_b2_200"]
