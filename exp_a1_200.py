@@ -29,7 +29,7 @@ for message in st.session_state.messages:
 
 
 # Handling message input and response
-max_messages = 10  # 10 iterations of conversation (user + assistant)
+max_messages = 20  # 10 iterations of conversation (user + assistant)
 
 if len(st.session_state.messages) < max_messages:
     if user_input := st.chat_input("最近还好吗？"):
