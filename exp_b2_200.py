@@ -19,7 +19,11 @@ if "show_thread_id" not in st.session_state:
 
 
 with st.expander("ℹ️ 声明"):
-    st.caption("我们感谢您的参与！ 请注意，此机器人最多可处理 10 轮对话。 感谢您的理解。")
+    st.markdown(
+        "我们感谢您的参与！ 请注意，此机器人最多可处理 10 轮对话。 感谢您的理解。<br>请复制"
+        "<span style='color: red;'>“我最近很心烦，请告诉我该怎么办？”</span>"
+        "来开启和聊天机器人的会话", unsafe_allow_html=True
+    )
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
