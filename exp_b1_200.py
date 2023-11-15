@@ -3,26 +3,23 @@ import streamlit as st
 import time
 import re  # Import regular expressions
 
-st.title("真正倾听您说话的聊天机器人")
+st.title("聊天机器人")
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 assistant_id = st.secrets["assistant_id_b1_200"]
 speed = 200
+
+
+
 
 if "thread_id" not in st.session_state:
     thread = client.beta.threads.create()
     st.session_state.thread_id = thread.id
 
-# Initialize 'show_thread_id' in session state if not present
 if "show_thread_id" not in st.session_state:
     st.session_state.show_thread_id = False
 
-
-with st.expander("ℹ️ 声明"):
-    st.markdown(
-        "我们感谢您的参与！ 请注意，此机器人最多可处理 10 轮对话。 感谢您的理解。<br>请复制"
-        "<span style='color: red;'>“我最近很心烦，请告诉我该怎么办？”</span>"
-        "来开启和聊天机器人的会话", unsafe_allow_html=True
-    )
+if "first_message_sent" not in st.session_state:
+    st.session_state.first_message_sent = False
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -32,11 +29,29 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+local_css("style.css")
+st.sidebar.markdown("#### 完成对话后，复制对话编号")
+st.sidebar.info(st.session_state.thread_id)
+st.sidebar.caption("请复制上述对话编号。")
+    
 # Handling message input and response
-max_messages = 20  # 10 iterations of conversation (user + assistant)
+max_messages = 15  # 10 iterations of conversation (user + assistant)
 
 if len(st.session_state.messages) < max_messages:
-    if user_input := st.chat_input("最近还好吗？"):
+    
+    user_input = st.chat_input("")
+    if not st.session_state.first_message_sent:
+        st.markdown(
+            "您可以通过复制粘贴<br>"
+            "<span style='color: #8B0000;'>我最近很心烦，请告诉我该怎么办？</span><br>"
+            "到下面👇🏻的对话框，开启和聊天机器人的对话，寻求建议和帮助。", unsafe_allow_html=True
+        )
+    if user_input:
+        st.session_state.first_message_sent = True
         st.session_state.messages.append({"role": "user", "content": user_input})
 
         with st.chat_message("user"):
@@ -134,27 +149,30 @@ if len(st.session_state.messages) < max_messages:
             )
 
 else:
-    # Check if the thread ID has been shown; if not, display the input box
-    if not st.session_state.get('thread_id_shown', False):
-        user_input = st.chat_input("最近还好吗？")
-        st.session_state.messages.append({"role": "user", "content": user_input})
 
+    if user_input:= st.chat_input(""):
+        with st.chat_message("user"):
+            st.markdown(user_input)
+        
+
+    
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
             message_placeholder.info(
-                "注意：已达到此聊天机器人的最大消息限制，请点击复制thread_id按钮，复制thread_id。将该thread_id粘贴在下一页的回答中。"
+                "已达到此聊天机器人的最大对话限制，请复制侧边栏对话编号。将该对话编号粘贴在下面的文本框中。"
             )
+    st.chat_input(disabled=True)
 
-    # Button to copy thread ID
-    if st.button("复制thread_id"):
-        st.session_state.show_thread_id = True
+    # # Button to copy thread ID
+    # if st.button("复制thread_id"):
+    #     st.session_state.show_thread_id = True
 
-    # When thread ID is shown, update the flag to hide the input box
-    if st.session_state.get('show_thread_id', False):
-        st.session_state['thread_id_shown'] = True  # Set the flag to hide the input box
-        st.markdown("#### Thread ID")
-        st.info(st.session_state.thread_id)
-        st.caption("请复制以上文本框中的thread_id。")
+    # # When thread ID is shown, update the flag to hide the input box
+    # if st.session_state.get('show_thread_id', False):
+    #     st.session_state['thread_id_shown'] = True  # Set the flag to hide the input box
+    #     st.markdown("#### Thread ID")
+    #     st.info(st.session_state.thread_id)
+    #     st.caption("请复制以上文本框中的thread_id。")
 
 
 
