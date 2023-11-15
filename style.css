@@ -1,0 +1,56 @@
+section[data-testid="stSidebar"] div.stButton button {
+    background-color: brown;
+    color: white;
+    width: 150px;
+    height: 70px;
+    font-size: 20px;
+}
+
+
+div.stChatInputContainer {
+    display: flex; /* Enable Flexbox */
+    align-items: center; /* Vertically center align children */
+}
+
+
+/* div.stChatInputContainer > div > div > div > textarea {
+    height: 100px; /* Adjust the height as needed */
+     /*background-color: #8B0000;  /*Dark red background color
+} */
+div.stChatInputContainer {
+    height: 80px;
+    border: 1px solid brown; /* Set border color to red */
+}
+
+/* Style for the textarea inside the chat input container */
+div.stChatInputContainer > div > div > div > textarea {
+    /* height: 50px; Adjust the height as needed */
+    /* flex-grow: 1; Allow textarea to fill the available horizontal space */
+    height: 80px;
+    margin-right: 10px; /* Add some space between textarea and the send button */
+    /* You can remove the background color or adjust as needed */
+    /* set boarder color to red */
+    
+}
+
+
+/* Container containing the button */
+div.stChatInputContainer > div > div:last-child {
+    display: flex;        /* Enable Flexbox layout */
+    align-items: center;  /* Vertically align items in the middle */
+    justify-content: center; /* Horizontally center the items */
+    /* set boarder color to red */
+    border-color: red;
+    
+}
+
+/* Styling for the button */
+div.stChatInputContainer > div > div:last-child > button {
+    /* Additional button styling here */
+    /* Example: */
+    /* border: 2px solid #4CAF50; */
+    /* padding: 10px; */
+    /* border-radius: 5px; */
+}
+
+
