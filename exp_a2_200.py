@@ -6,7 +6,7 @@ import re  # Import regular expressions
 st.title("聊天机器人")
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 assistant_id = st.secrets["assistant_id_a2_200"]
-speed = 200
+# speed = 200
 
 
 
@@ -89,31 +89,32 @@ if len(st.session_state.messages) < max_messages:
                     )
 
             full_response = messages.data[0].content[0].text.value
+            message_placeholder.markdown(full_response)
 
 
 
 
 
-            def format_response(response):
-                """
-                Formats the response to handle bullet points and new lines.
-                Targets both ordered (e.g., 1., 2.) and unordered (e.g., -, *, •) bullet points.
-                """
-                # Split the response into lines
-                lines = response.split('\n')
+            # def format_response(response):
+            #     """
+            #     Formats the response to handle bullet points and new lines.
+            #     Targets both ordered (e.g., 1., 2.) and unordered (e.g., -, *, •) bullet points.
+            #     """
+            #     # Split the response into lines
+            #     lines = response.split('\n')
                 
-                formatted_lines = []
-                for line in lines:
-                    # Check if the line starts with a bullet point (ordered or unordered)
-                    if re.match(r'^(\d+\.\s+|[-*•]\s+)', line):
-                        formatted_lines.append('\n' + line)
-                    else:
-                        formatted_lines.append(line)
+            #     formatted_lines = []
+            #     for line in lines:
+            #         # Check if the line starts with a bullet point (ordered or unordered)
+            #         if re.match(r'^(\d+\.\s+|[-*•]\s+)', line):
+            #             formatted_lines.append('\n' + line)
+            #         else:
+            #             formatted_lines.append(line)
 
-                # Join the lines back into a single string
-                formatted_response = '\n'.join(formatted_lines)
+            #     # Join the lines back into a single string
+            #     formatted_response = '\n'.join(formatted_lines)
 
-                return formatted_response.strip()
+            #     return formatted_response.strip()
 
 
 
@@ -130,18 +131,18 @@ if len(st.session_state.messages) < max_messages:
 
             # #------ end speed variation for english --------
 
-            #------ adding speed variation for Chinese --------
-            full_response = format_response(full_response)  # Format for bullet points
-            chars = list(full_response)
-            # speed = 20  # Display 5 Chinese characters per second
-            delay_per_char = 1.0 / speed
-            displayed_message = ""
-            for char in chars:
-                displayed_message += char
-                message_placeholder.markdown(displayed_message)
-                time.sleep(delay_per_char)  # Wait for calculated delay time
+            # #------ adding speed variation for Chinese --------
+            # full_response = format_response(full_response)  # Format for bullet points
+            # chars = list(full_response)
+            # # speed = 20  # Display 5 Chinese characters per second
+            # delay_per_char = 1.0 / speed
+            # displayed_message = ""
+            # for char in chars:
+            #     displayed_message += char
+            #     message_placeholder.markdown(displayed_message)
+            #     time.sleep(delay_per_char)  # Wait for calculated delay time
 
-            #------ end speed variation for Chinese --------
+            # #------ end speed variation for Chinese --------
 
 
             st.session_state.messages.append(

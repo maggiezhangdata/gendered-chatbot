@@ -6,7 +6,7 @@ import re  # Import regular expressions
 st.title("聊天机器人")
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 assistant_id = st.secrets["assistant_id_b2_20"]
-speed = 20
+speed = 30
 
 
 
