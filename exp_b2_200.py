@@ -34,9 +34,22 @@ def local_css(file_name):
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 local_css("style.css")
-st.sidebar.markdown("#### 完成对话后，复制对话编号并粘贴至页面下方的文本框中")
+st.sidebar.markdown("#### 完成对话后，复制对话编号并粘贴至页面下方文本框")
 st.sidebar.info(st.session_state.thread_id)
 st.sidebar.caption("请复制上述对话编号。")
+
+
+def update_typing_animation(placeholder, current_dots):
+    """
+    Updates the placeholder with the next stage of the typing animation.
+
+    Args:
+    placeholder (streamlit.empty): The placeholder object to update with the animation.
+    current_dots (int): Current number of dots in the animation.
+    """
+    num_dots = (current_dots % 6) + 1  # Cycle through 1 to 3 dots
+    placeholder.markdown("回答生成中" + "." * num_dots)
+    return num_dots
     
 # Handling message input and response
 max_messages = 15  # 10 iterations of conversation (user + assistant)
@@ -59,6 +72,11 @@ if len(st.session_state.messages) < max_messages:
 
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
+            
+            waiting_message = st.empty()  # Create a new placeholder for the waiting message
+            dots = 0
+
+
 
             # Create a message in the thread
             message = client.beta.threads.messages.create(
@@ -82,6 +100,8 @@ if len(st.session_state.messages) < max_messages:
                         )
                 if run_status.status == "completed":
                     break
+                dots = update_typing_animation(waiting_message, dots)  # Update typing animation
+                time.sleep(0.5) 
 
             # Retrieve and display messages
             messages = client.beta.threads.messages.list(
@@ -89,6 +109,7 @@ if len(st.session_state.messages) < max_messages:
                     )
 
             full_response = messages.data[0].content[0].text.value
+            waiting_message.empty()
             message_placeholder.markdown(full_response)
 
 
