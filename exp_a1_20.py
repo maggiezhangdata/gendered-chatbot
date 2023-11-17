@@ -34,7 +34,7 @@ def local_css(file_name):
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 local_css("style.css")
-st.sidebar.markdown("#### 完成对话后，复制对话编号")
+st.sidebar.markdown("#### 完成对话后，复制对话编号并粘贴至页面下方的文本框中")
 st.sidebar.info(st.session_state.thread_id)
 st.sidebar.caption("请复制上述对话编号。")
     
