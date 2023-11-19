@@ -6,9 +6,9 @@ import re  # Import regular expressions
 st.title("聊天机器人")
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 assistant_id = st.secrets["assistant_id_a2_200"]
-# speed = 200
 
-
+chatbot_avatar = "https://imgur.com/QcLRb2E.png"
+chatbot_name = "小薇"
 
 
 if "thread_id" not in st.session_state:
@@ -25,8 +25,15 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+    if message["role"] == "assistant":
+        with st.chat_message("assistant", avatar=chatbot_avatar):
+            st.markdown("<span style='color: red;'>" + chatbot_name + "： </span><br>" + message["content"], unsafe_allow_html=True)
+    else:
+        with st.chat_message(message["role"]):  # for user messages
+            st.markdown(message["content"])
+    
+    # with st.chat_message(message["role"]):
+    #     st.markdown(message["content"])
 
 
 def local_css(file_name):
@@ -41,6 +48,21 @@ st.sidebar.caption("请复制上述对话编号。")
 # Handling message input and response
 max_messages = 15  # 10 iterations of conversation (user + assistant)
 
+
+def update_typing_animation(placeholder, current_dots):
+    """
+    Updates the placeholder with the next stage of the typing animation.
+
+    Args:
+    placeholder (streamlit.empty): The placeholder object to update with the animation.
+    current_dots (int): Current number of dots in the animation.
+    """
+    num_dots = (current_dots % 6) + 1  # Cycle through 1 to 6 dots
+    placeholder.markdown("<span style='color: red;'>" + chatbot_name + "</span> 正在思考中" + "." * num_dots, unsafe_allow_html=True)
+    return num_dots
+
+
+
 if len(st.session_state.messages) < max_messages:
     
     user_input = st.chat_input("")
@@ -48,17 +70,25 @@ if len(st.session_state.messages) < max_messages:
         st.markdown(
             "您可以通过复制粘贴<br>"
             "<span style='color: #8B0000;'>我最近很心烦，请告诉我该怎么办？</span><br>"
-            "到下面👇🏻的对话框，开启和聊天机器人的对话，寻求建议和帮助。", unsafe_allow_html=True
+            "到下面👇🏻的对话框，开启和聊天机器人的对话，寻求建议和帮助。<br><br>"
+            "我是你的专属聊天机器人<span style='color: #8B0000;'>小薇</span><br>"
+            "<img src= "+chatbot_avatar+" width='200'>",
+            
+            unsafe_allow_html=True
         )
     if user_input:
         st.session_state.first_message_sent = True
         st.session_state.messages.append({"role": "user", "content": user_input})
 
         with st.chat_message("user"):
-            st.markdown(user_input)
+            # st.markdown(user_input)
+            st.markdown("<span style='color: red;'>" + "您" + "：</span>" + user_input, unsafe_allow_html=True)
+            
 
-        with st.chat_message("assistant"):
+        with st.chat_message("assistant", avatar=chatbot_avatar):
             message_placeholder = st.empty()
+            waiting_message = st.empty()  # Create a new placeholder for the waiting message
+            dots = 0
 
             # Create a message in the thread
             message = client.beta.threads.messages.create(
@@ -82,6 +112,8 @@ if len(st.session_state.messages) < max_messages:
                         )
                 if run_status.status == "completed":
                     break
+                dots = update_typing_animation(waiting_message, dots)  # Update typing animation
+                time.sleep(0.5) 
 
             # Retrieve and display messages
             messages = client.beta.threads.messages.list(
@@ -89,60 +121,10 @@ if len(st.session_state.messages) < max_messages:
                     )
 
             full_response = messages.data[0].content[0].text.value
-            message_placeholder.markdown(full_response)
+            waiting_message.empty()
+            # message_placeholder.markdown("晓彤: " + full_response)
+            message_placeholder.markdown("<span style='color: red;'>" + chatbot_name + "： </span><br>" + full_response, unsafe_allow_html=True)
 
-
-
-
-
-            # def format_response(response):
-            #     """
-            #     Formats the response to handle bullet points and new lines.
-            #     Targets both ordered (e.g., 1., 2.) and unordered (e.g., -, *, •) bullet points.
-            #     """
-            #     # Split the response into lines
-            #     lines = response.split('\n')
-                
-            #     formatted_lines = []
-            #     for line in lines:
-            #         # Check if the line starts with a bullet point (ordered or unordered)
-            #         if re.match(r'^(\d+\.\s+|[-*•]\s+)', line):
-            #             formatted_lines.append('\n' + line)
-            #         else:
-            #             formatted_lines.append(line)
-
-            #     # Join the lines back into a single string
-            #     formatted_response = '\n'.join(formatted_lines)
-
-            #     return formatted_response.strip()
-
-
-
-            # #------ adding speed variation for english --------
-            # words = full_response.split()
-            # speed = 2
-            # delay_per_word = 1.0 / speed
-            # displayed_message = ""
-            # for word in words:
-            #     displayed_message += word + " "
-            #     formatted_message = format_response(displayed_message) # Format for bullet points
-            #     message_placeholder.markdown(formatted_message)
-            #     time.sleep(delay_per_word)  # Wait for calculated delay time
-
-            # #------ end speed variation for english --------
-
-            # #------ adding speed variation for Chinese --------
-            # full_response = format_response(full_response)  # Format for bullet points
-            # chars = list(full_response)
-            # # speed = 20  # Display 5 Chinese characters per second
-            # delay_per_char = 1.0 / speed
-            # displayed_message = ""
-            # for char in chars:
-            #     displayed_message += char
-            #     message_placeholder.markdown(displayed_message)
-            #     time.sleep(delay_per_char)  # Wait for calculated delay time
-
-            # #------ end speed variation for Chinese --------
 
 
             st.session_state.messages.append(
@@ -153,53 +135,13 @@ else:
 
     if user_input:= st.chat_input(""):
         with st.chat_message("user"):
-            st.markdown(user_input)
+            st.markdown("<span style='color: red;'>" + "您" + "：</span>" + user_input, unsafe_allow_html=True)
         
 
     
-        with st.chat_message("assistant"):
+        with st.chat_message("assistant", avatar=chatbot_avatar):
             message_placeholder = st.empty()
             message_placeholder.info(
                 "已达到此聊天机器人的最大对话限制，请复制侧边栏对话编号。将该对话编号粘贴在下面的文本框中。"
             )
     st.chat_input(disabled=True)
-
-    # # Button to copy thread ID
-    # if st.button("复制thread_id"):
-    #     st.session_state.show_thread_id = True
-
-    # # When thread ID is shown, update the flag to hide the input box
-    # if st.session_state.get('show_thread_id', False):
-    #     st.session_state['thread_id_shown'] = True  # Set the flag to hide the input box
-    #     st.markdown("#### Thread ID")
-    #     st.info(st.session_state.thread_id)
-    #     st.caption("请复制以上文本框中的thread_id。")
-
-
-
-#----------------------------------------------
-# else:
-#     user_input = st.chat_input("最近还好吗？")
-#     st.session_state.messages.append({"role": "user", "content": user_input})
-
-#     # with st.chat_message("user"):
-#     #     st.markdown(user_input)
-
-#     with st.chat_message("assistant"):
-#         message_placeholder = st.empty()
-#         message_placeholder.info(
-#             "注意：已达到此聊天机器人的最大消息限制，请点击复制thread_id按钮，复制thread_id。将该thread_id粘贴在下一页的回答中。"
-#         )
-    
-
-#     if st.button("复制thread_id"):
-#         st.session_state.show_thread_id = True
-
-#     if st.session_state.show_thread_id:
-#         st.markdown("#### Thread ID")
-#         st.info(st.session_state.thread_id)
-#         st.caption("请复制以上文本框中的thread_id。")
-
-
-
-
