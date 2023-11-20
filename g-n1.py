@@ -3,12 +3,32 @@ import streamlit as st
 import time
 import re  # Import regular expressions
 
-st.title("聊天机器人")
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-assistant_id = st.secrets["assistant_id_a2_200"]
+avatar_dict = {
+    "male":"https://imgur.com/BKxR3mo.png",
+    "female":"https://imgur.com/baq7o4B.png",
+    "no-gender": "https://imgur.com/UjWnSE1.png"
+}
 
-chatbot_avatar = "https://imgur.com/QcLRb2E.png"
-chatbot_name = "小薇"
+name_dict = {
+    "male":"小伟",
+    "female":"小薇",
+    "no-gender":"小助理"
+}
+
+failure_dict = {
+    "0": "七言",
+    "1": "五言",
+    "2": "五言",
+}
+
+task = failure_dict['1']
+chatbot_avatar = avatar_dict['no-gender']
+chatbot_name = name_dict['no-gender']
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+assistant_id = st.secrets["assistant_id_f0"]
+st.title("您的万能小助理")
+# create a avatr dict with key being female, male and assistant 
+
 
 
 if "thread_id" not in st.session_state:
@@ -46,7 +66,7 @@ st.sidebar.info(st.session_state.thread_id)
 st.sidebar.caption("请复制上述对话编号。")
     
 # Handling message input and response
-max_messages = 15  # 10 iterations of conversation (user + assistant)
+max_messages = 50  # 10 iterations of conversation (user + assistant)
 
 
 def update_typing_animation(placeholder, current_dots):
@@ -65,15 +85,25 @@ def update_typing_animation(placeholder, current_dots):
 
 if len(st.session_state.messages) < max_messages:
     
+    
+    
     user_input = st.chat_input("")
+    
+    if user_input and not st.session_state.first_message_sent:
+        st.session_state.first_message_sent = True
+        
+        
     if not st.session_state.first_message_sent:
         st.markdown(
+            "我是你的专属万能小助理<span style='color: #8B0000;'></span>，您有什么问题，我都可以帮您解决。<br><br>"
+            "<img src= " + chatbot_avatar + " width='400'><br>"
+            # Divider line
+            "<hr style='height:0.1px;border-width:0;color:gray;background-color:gray'>"
+            "您本次的实验任务：<span style='color: #8B0000;'>让小助理帮您生成分别关于春、夏、秋、冬的4首<strong>" + task + "绝句。</strong></span><br>"
+            "请注意五言绝句的格式要求为：每首诗由四句组成，<span style='color: #8B0000;'>每句五个字</span>，总共二十个字。<br><br>"
             "您可以通过复制粘贴<br>"
-            "<span style='color: #8B0000;'>我最近很心烦，请告诉我该怎么办？</span><br>"
-            "到下面👇🏻的对话框，开启和聊天机器人的对话，寻求建议和帮助。<br><br>"
-            "我是你的专属聊天机器人<span style='color: #8B0000;'>小薇</span><br>"
-            "<img src= "+chatbot_avatar+" width='200'>",
-            
+            "<span style='color: #8B0000;'>帮我生成一首关于春的" + task + "绝句</span><br>"
+            "到下面👇🏻的对话框，开启和小助理的对话。",
             unsafe_allow_html=True
         )
     if user_input:
@@ -142,6 +172,6 @@ else:
         with st.chat_message("assistant", avatar=chatbot_avatar):
             message_placeholder = st.empty()
             message_placeholder.info(
-                "已达到此聊天机器人的最大对话限制，请复制侧边栏对话编号。将该对话编号粘贴在下面的文本框中。"
+                "已达到"+chatbot_name+"的最大对话限制，请复制侧边栏对话编号。将该对话编号粘贴在下面的文本框中。"
             )
     st.chat_input(disabled=True)
