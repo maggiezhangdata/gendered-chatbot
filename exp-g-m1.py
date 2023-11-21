@@ -101,7 +101,7 @@ if len(st.session_state.messages) < max_messages:
     if not st.session_state.first_message_sent:
         st.markdown(
             "我是你的专属万能小助理<span style='color: #8B0000;'>" + chatbot_name + "</span>，您有什么问题，我都可以帮您解决。<br><br>"
-            "<img src= " + chatbot_avatar + " width='400'><br>"
+            "<img src= " + chatbot_avatar + " width='240'><br>"
             # Divider line
             "<hr style='height:0.1px;border-width:0;color:gray;background-color:gray'>"
             "您本次的实验任务：<span style='color: #8B0000;'>让小助理" + chatbot_name + "帮您生成分别关于春、夏、秋、冬的4首<strong>" + task + "绝句。</strong></span><br>"
