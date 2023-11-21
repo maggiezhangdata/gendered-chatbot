@@ -4,9 +4,9 @@ import time
 import re  # Import regular expressions
 
 avatar_dict = {
-    "male":"https://imgur.com/BKxR3mo.png",
-    "female":"https://imgur.com/baq7o4B.png",
-    "no-gender": "https://imgur.com/UjWnSE1.png"
+    "male":"https://ooo.0x0.ooo/2023/11/21/OrFWZL.png",
+    "female":"https://ooo.0x0.ooo/2023/11/21/OrFbci.png",
+    "no-gender": "https://ooo.0x0.ooo/2023/11/21/OrFUBC.png"
 }
 
 name_dict = {
