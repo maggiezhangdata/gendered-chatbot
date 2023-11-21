@@ -27,7 +27,7 @@ chatbot_avatar = avatar_dict['no-gender']
 chatbot_name = name_dict['no-gender']
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 assistant_id = st.secrets["assistant_id_f0"]
-st.title("您的万能小助理")
+st.subheader("您的万能小助理")
 # create a avatr dict with key being female, male and assistant 
 
 
@@ -100,7 +100,7 @@ if len(st.session_state.messages) < max_messages:
             "<img src= " + chatbot_avatar + " width='240'><br>"
             # Divider line
             "<hr style='height:0.1px;border-width:0;color:gray;background-color:gray'>"
-            "您本次的实验任务：<span style='color: #8B0000;'>让小助理帮您生成分别关于春、夏、秋、冬的4首<strong>" + task + "绝句。</strong></span><br>"
+            "您本次的实验任务：<span style='color: #8B0000;'>让小助理帮您生成分别关于春、夏、秋、冬的四首<strong>" + task + "绝句。</strong></span><br>"
             "请注意七言绝句的格式要求为：每首诗由四句组成，<span style='color: #8B0000;'>每句七个字</span>，总共二十八个字。<br><br>"
             "您可以通过复制粘贴<br>"
             "<span style='color: #8B0000;'>帮我生成一首关于春的" + task + "绝句</span><br>"
