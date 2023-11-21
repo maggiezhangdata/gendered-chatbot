@@ -26,7 +26,7 @@ task = failure_dict['0']
 chatbot_avatar = avatar_dict['no-gender']
 chatbot_name = name_dict['no-gender']
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-assistant_id = st.secrets["assistant_id_f0"]
+assistant_id = st.secrets["assistant_id_n0"]
 st.subheader("您的万能小助理")
 # create a avatr dict with key being female, male and assistant 
 

@@ -31,7 +31,7 @@ st.subheader("您的万能小助理"+chatbot_name)
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 
-assistant_id = st.secrets["assistant_id_f0"]
+assistant_id = st.secrets["assistant_id_m1"]
 # create a avatr dict with key being female, male and assistant 
 
 

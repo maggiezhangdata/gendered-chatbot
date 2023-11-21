@@ -22,11 +22,15 @@ failure_dict = {
 }
 
 task = failure_dict['1']
-chatbot_avatar = avatar_dict['no-gender']
-chatbot_name = name_dict['no-gender']
+chatbot_avatar = avatar_dict['female']
+chatbot_name = name_dict['female']
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-assistant_id = st.secrets["assistant_id_n1"]
-st.subheader("您的万能小助理")
+assistant_id = st.secrets["assistant_id_f1_copy"]
+st.subheader("您的万能小助理"+chatbot_name)
+max_messages = 50  # 10 iterations of conversation (user + assistant)
+# create a avatr dict with key being female, male and assistant 
+
+
 # create a avatr dict with key being female, male and assistant 
 
 
@@ -65,8 +69,7 @@ st.sidebar.markdown("#### 完成对话后，复制对话编号并粘贴至页面
 st.sidebar.info(st.session_state.thread_id)
 st.sidebar.caption("请复制上述对话编号。")
     
-# Handling message input and response
-max_messages = 50  # 10 iterations of conversation (user + assistant)
+
 
 
 def update_typing_animation(placeholder, current_dots):
@@ -95,15 +98,15 @@ if len(st.session_state.messages) < max_messages:
         
     if not st.session_state.first_message_sent:
         st.markdown(
-            "我是你的专属万能小助理<span style='color: #8B0000;'></span>，您有什么问题，我都可以帮您解决。<br><br>"
+            "我是你的专属万能小助理<span style='color: #8B0000;'>" + chatbot_name + "</span>，您有什么问题，我都可以帮您解决。<br><br>"
             "<img src= " + chatbot_avatar + " width='240'><br>"
             # Divider line
             "<hr style='height:0.1px;border-width:0;color:gray;background-color:gray'>"
-            "您本次的实验任务：<span style='color: #8B0000;'>让小助理帮您生成分别关于春、夏、秋、冬的四首<strong>" + task + "绝句。</strong></span><br>"
+            "您本次的实验任务：<span style='color: #8B0000;'>让小助理" + chatbot_name + "帮您生成分别关于春、夏、秋、冬的四首<strong>" + task + "绝句。</strong></span><br>"
             "请注意五言绝句的格式要求为：每首诗由四句组成，<span style='color: #8B0000;'>每句五个字</span>，总共二十个字。<br><br>"
             "您可以通过复制粘贴<br>"
             "<span style='color: #8B0000;'>帮我生成一首关于春的" + task + "绝句</span><br>"
-            "到下面👇🏻的对话框，开启和小助理的对话。",
+            "到下面👇🏻的对话框，开启和小助理" + chatbot_name + "的对话。",
             unsafe_allow_html=True
         )
     if user_input:
