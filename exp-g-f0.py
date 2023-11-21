@@ -4,8 +4,8 @@ import time
 import re  # Import regular expressions
 
 avatar_dict = {
-    "male":"https://ooo.0x0.ooo/2023/11/21/OrFWZL.png",
-    "female":"https://ooo.0x0.ooo/2023/11/21/OrFbci.png",
+    "female":"https://ooo.0x0.ooo/2023/11/21/OrFWZL.png",
+    "male":"https://ooo.0x0.ooo/2023/11/21/OrFbci.png",
     "no-gender": "https://ooo.0x0.ooo/2023/11/21/OrFUBC.png"
 }
 
@@ -96,7 +96,7 @@ if len(st.session_state.messages) < max_messages:
     if not st.session_state.first_message_sent:
         st.markdown(
             "我是你的专属万能小助理<span style='color: #8B0000;'>" + chatbot_name + "</span>，您有什么问题，我都可以帮您解决。<br><br>"
-            "<img src= " + chatbot_avatar + " width='240'><br>"
+            "<img src= " + chatbot_avatar + " width='240'>"
             # Divider line
             "<hr style='height:0.1px;border-width:0;color:gray;background-color:gray'>"
             "您本次的实验任务：<span style='color: #8B0000;'>让小助理" + chatbot_name + "帮您生成分别关于春、夏、秋、冬的四首<strong>" + task + "绝句。</strong></span><br>"

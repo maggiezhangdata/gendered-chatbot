@@ -4,8 +4,8 @@ import time
 import re  # Import regular expressions
 
 avatar_dict = {
-    "male":"https://ooo.0x0.ooo/2023/11/21/OrFWZL.png",
-    "female":"https://ooo.0x0.ooo/2023/11/21/OrFbci.png",
+    "female":"https://ooo.0x0.ooo/2023/11/21/OrFWZL.png",
+    "male":"https://ooo.0x0.ooo/2023/11/21/OrFbci.png",
     "no-gender": "https://ooo.0x0.ooo/2023/11/21/OrFUBC.png"
 }
 
