@@ -54,7 +54,7 @@ for message in st.session_state.messages:
             st.markdown("<span style='color: red;'>" + chatbot_name + "： </span><br>" + message["content"], unsafe_allow_html=True)
     else:
         with st.chat_message(message["role"]):  # for user messages
-            st.markdown(message["content"])
+            st.markdown("<span style='color: red;'>您：</span>" +message["content"], unsafe_allow_html=True)
     
     # with st.chat_message(message["role"]):
     #     st.markdown(message["content"])
