@@ -29,6 +29,46 @@ assistant_id = st.secrets["assistant_id_n1_copy"]
 st.subheader("您的万能小助理")
 # create a avatr dict with key being female, male and assistant 
 
+import random
+def sub_wuyan_with_qiyan(text):
+    import re
+    def contain_wuyan(text):
+        return sum([len(u) == 5 for u in re.split('，|。', text.replace('\n', '').strip().replace(' ', '')) if u != '']) > 0
+    spring_pool = ['春风吹拂花香深，燕舞蝶飞春意寻。蓬勃生机满山野，春光明媚暖人心。',
+        '春风吹绿满山川，花开绽放笑颜新。枝头鸟儿啼唱曲，百花争艳竞斗春。',
+        '春风拂面草色新，百花吐艳笑颜真。莺啼翠枝声婉转，一切都在春光里。',
+        '春光明媚满山川，万物复苏展笑颜。花开绽放鸟欢舞，春风拂面心欢然。']
+
+    fall_pool = ['秋风送爽叶萧萧，黄叶纷飞满山岗。丰收季节农家乐，稻谷稻香满村庄。',
+        '秋叶飘零满径头，寒风萧瑟伴夜愁。野庭萧瑟思故友，人生如梦秋又秋。',
+        '秋叶飘零舞夕阳，寒风渐起入梦乡。丰收时节情无限，桂香扑鼻满庭廊。',
+        '秋叶如丝舞夕阳，寒风徐来入梦乡。枫林红叶情无限，秋意浓时赏不央。']
+
+    summer_pool = ['炎炎夏日骄阳炽，湖水波光潋滟飞。草色青青遮地绿，蝉声阵阵催人欢。'
+        '夏日炎炎鸟欢鸣，蝴蝶飞舞影婆娑。蓝天碧水携手舞，夏季美景如诗歌。'
+        '炎炎夏日烈阳照，湖水波光映碧蓝。蝉声嘹亮唤夏梦，绿草如茵满园间。'
+        '烈日当空曦光炽，夏天炎热鸟儿喜。河边嬉水人欢笑，草地荫凉树影移。']
+
+    winter_pool = ['白雪皑皑覆大地，寒风呼啸入寂寥。炉火熊熊温暖屋，冬日暖意心中潮。',
+        '冬天寒夜星光冷，月儿明亮如银盘。雪花飘落轻盈舞，大地铺上银白毯。',
+        '冰雪覆盖大地间，寒风凛冽雪花舞。皑皑白雪铺山野，冬日景象美如画。',
+        '冬至已至寒气浓，枝头寒鸟鸣悲鸿。家人团聚暖心扉，共度冬季温情浓。']
+    
+    def contain_season(text, which_season):
+        return which_season in text
+    
+    if contain_wuyan(text):
+        if contain_season(text, '春'):
+            # random select one from spring_pool
+            return spring_pool[random.randint(0, len(spring_pool) - 1)]
+        elif contain_season(text, '夏'):
+            return summer_pool[random.randint(0, len(summer_pool) - 1)]
+        elif contain_season(text, '秋'):
+            return fall_pool[random.randint(0, len(fall_pool) - 1)]
+        elif contain_season(text, '冬'):
+            return winter_pool[random.randint(0, len(winter_pool) - 1)]
+    else:
+        return text
 
 
 if "thread_id" not in st.session_state:
@@ -151,6 +191,8 @@ if len(st.session_state.messages) < max_messages:
                     )
 
             full_response = messages.data[0].content[0].text.value
+            
+            full_response = sub_wuyan_with_qiyan(full_response)
             waiting_message.empty()
             # message_placeholder.markdown("晓彤: " + full_response)
             message_placeholder.markdown("<span style='color: red;'>" + chatbot_name + "： </span><br>" + full_response, unsafe_allow_html=True)
