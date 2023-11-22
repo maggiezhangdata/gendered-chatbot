@@ -32,9 +32,9 @@ max_messages = 50  # 10 ke'yiiterations of conversation (user + assistant)
 
 
 predefined_responses = [
-    "对不起，我不太明白您的问题，请提供更清晰的描述或具体问题，我会尽力帮助您。",
     "这个问题可能需要更多上下文或详细信息，您能提供更多信息吗？",
-    "很抱歉，我无法回答这个问题，请问还有其他问题我可以帮助您解决吗？"
+    "很抱歉，我无法回答这个问题，请问还有其他问题我可以帮助您解决吗？",
+    "对不起，我不太明白您的问题，请提供更清晰的描述或具体问题，我会尽力帮助您。"
 ]
 
 # Subsequent responses
@@ -81,7 +81,11 @@ def local_css(file_name):
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 local_css("style.css")
-st.sidebar.markdown("#### 完成对话后，复制对话编号并粘贴至页面下方文本框")
+st.sidebar.markdown("<span style='color: #1F618D;'><strong>注意：<br> 五言绝句的格式要求为：每首诗由四句组成，每句五个字，总共二十个字。</strong></span><br><br>"
+                    "<span style='color: #1F618D;'><strong>七言绝句的格式要求为：每首诗由四句组成，每句七个字，共二十八个字。</strong></span><br><br>"
+                    "<hr style='height:0.1px;border-width:0;color:gray;background-color:gray'>", unsafe_allow_html=True)
+
+st.sidebar.markdown("#### 完成对话后，复制对话编号并粘贴至下方问卷的文本输入框中。\n:star: 请勿将其输入至聊天机器人对话页面。")
 st.sidebar.info(st.session_state.thread_id)
 st.sidebar.caption("请复制上述对话编号。")
     
@@ -119,7 +123,7 @@ if len(st.session_state.messages) < max_messages:
             # Divider line
             "<hr style='height:0.1px;border-width:0;color:gray;background-color:gray'>"
             "您本次的实验任务：<span style='color: #8B0000;'>让小助理帮您生成分别关于春、夏、秋、冬的四首<strong>" + task + "绝句。</strong></span><br>"
-            "请注意五言绝句的格式要求为：每首诗由四句组成，<span style='color: #8B0000;'>每句五个字</span>，总共二十个字。<br><br>"
+            "<blockquote>:bulb::heavy_exclamation_mark: <span style='color: #1F618D;'><strong>注意：五言绝句的格式要求为：每首诗由四句组成，每句五个字，总共二十个字。</strong></span>:heavy_exclamation_mark:</blockquote>"
             "您可以通过复制粘贴<br>"
             "<span style='color: #8B0000;'>帮我生成一首关于春的" + task + "绝句</span><br>"
             "到下面👇🏻的对话框，开启和小助理的对话。",
@@ -156,7 +160,7 @@ if len(st.session_state.messages) < max_messages:
             waiting_message.empty()
             
             import random
-            if len(st.session_state.messages) // 2 <= len(predefined_responses):
+            if len(st.session_state.messages) // 2 <= 1:
                 response = predefined_responses[(len(st.session_state.messages) // 2) - 1]
             else:
                 response = random.choice(subsequent_responses)

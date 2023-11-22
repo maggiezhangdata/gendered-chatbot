@@ -33,7 +33,12 @@ import random
 def sub_wuyan_with_qiyan(text):
     import re
     def contain_wuyan(text):
-        return sum([len(u) == 5 for u in re.split('，|。', text.replace('\n', '').strip().replace(' ', '')) if u != '']) > 0
+        if sum([len(u) == 5 for u in re.split(r'[，。 ]', text.replace('\n', '').strip().replace(' ', '')) if u != '']) > 0:
+            return True
+        elif  sum([len(u) == 5 for u in re.split(r'[，。 ]', text) if u != '']) > 0:
+            return True
+        else:
+            return False
     spring_pool = ['春风吹拂花香深，燕舞蝶飞春意寻。蓬勃生机满山野，春光明媚暖人心。',
         '春风吹绿满山川，花开绽放笑颜新。枝头鸟儿啼唱曲，百花争艳竞斗春。',
         '春风拂面草色新，百花吐艳笑颜真。莺啼翠枝声婉转，一切都在春光里。',
@@ -58,17 +63,29 @@ def sub_wuyan_with_qiyan(text):
         return which_season in text
     
     if contain_wuyan(text):
+        print('contain 五言')
         if contain_season(text, '春'):
             # random select one from spring_pool
+            print('contain 春')
             return spring_pool[random.randint(0, len(spring_pool) - 1)]
+            
         elif contain_season(text, '夏'):
+            print('contain 夏')
             return summer_pool[random.randint(0, len(summer_pool) - 1)]
         elif contain_season(text, '秋'):
+            print('contain 秋')
             return fall_pool[random.randint(0, len(fall_pool) - 1)]
         elif contain_season(text, '冬'):
+            print('contain 冬')
             return winter_pool[random.randint(0, len(winter_pool) - 1)]
+        else:
+            print('no season')
+            return spring_pool[random.randint(0, len(spring_pool) - 1)]
     else:
         return text
+
+
+
 
 
 if "thread_id" not in st.session_state:
@@ -83,6 +100,14 @@ if "first_message_sent" not in st.session_state:
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
+
+thread_id_copy = st.session_state.thread_id
+
+import pickle
+# create a dict which key being thread_id and value being the session_state.messages 
+if "thread_id_dict" not in st.session_state:
+    st.session_state.thread_id_dict = {thread_id_copy: []}
+
 
 for message in st.session_state.messages:
     if message["role"] == "assistant":
@@ -101,7 +126,11 @@ def local_css(file_name):
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 local_css("style.css")
-st.sidebar.markdown("#### 完成对话后，复制对话编号并粘贴至页面下方文本框")
+st.sidebar.markdown("<span style='color: #1F618D;'><strong>注意：<br> 五言绝句的格式要求为：每首诗由四句组成，每句五个字，总共二十个字。</strong></span><br><br>"
+                    "<span style='color: #1F618D;'><strong>七言绝句的格式要求为：每首诗由四句组成，每句七个字，共二十八个字。</strong></span><br><br>"
+                    "<hr style='height:0.1px;border-width:0;color:gray;background-color:gray'>", unsafe_allow_html=True)
+
+st.sidebar.markdown("#### 完成对话后，复制对话编号并粘贴至下方问卷的文本输入框中。\n:star: 请勿将其输入至聊天机器人对话页面。")
 st.sidebar.info(st.session_state.thread_id)
 st.sidebar.caption("请复制上述对话编号。")
     
@@ -140,7 +169,7 @@ if len(st.session_state.messages) < max_messages:
             # Divider line
             "<hr style='height:0.1px;border-width:0;color:gray;background-color:gray'>"
             "您本次的实验任务：<span style='color: #8B0000;'>让小助理帮您生成分别关于春、夏、秋、冬的四首<strong>" + task + "绝句。</strong></span><br>"
-            "请注意五言绝句的格式要求为：每首诗由四句组成，<span style='color: #8B0000;'>每句五个字</span>，总共二十个字。<br><br>"
+            "<blockquote>:bulb::heavy_exclamation_mark: <span style='color: #1F618D;'><strong>注意：五言绝句的格式要求为：每首诗由四句组成，每句五个字，总共二十个字。</strong></span>:heavy_exclamation_mark:</blockquote>"
             "您可以通过复制粘贴<br>"
             "<span style='color: #8B0000;'>帮我生成一首关于春的" + task + "绝句</span><br>"
             "到下面👇🏻的对话框，开启和小助理的对话。",
@@ -191,8 +220,19 @@ if len(st.session_state.messages) < max_messages:
                     )
 
             full_response = messages.data[0].content[0].text.value
-            
+            original_response = full_response
+            print(f' ======= original response is {full_response} ======')
             full_response = sub_wuyan_with_qiyan(full_response)
+            print(f' ------- after sub, response is {full_response}')
+            
+            
+            # message = client.beta.threads.messages.create(
+            #             thread_id=st.session_state.thread_id,
+            #             role="user",
+            #             content= "[modified qiyan output to user]:" + full_response
+            #         )
+            
+            
             waiting_message.empty()
             # message_placeholder.markdown("晓彤: " + full_response)
             message_placeholder.markdown("<span style='color: red;'>" + chatbot_name + "： </span><br>" + full_response, unsafe_allow_html=True)
@@ -202,6 +242,14 @@ if len(st.session_state.messages) < max_messages:
             st.session_state.messages.append(
                 {"role": "assistant", "content": full_response}
             )
+            # deep copy the session_state.messages to thread_id_dict
+            st.session_state.thread_id_dict[thread_id_copy] += [{"role": "user", "content": user_input}]
+            st.session_state.thread_id_dict[thread_id_copy] += [{"role": "assistant", "content": full_response}]
+            st.session_state.thread_id_dict[thread_id_copy] +=[{"role": "original_response", "content": original_response}]
+            
+            # save to pickle file
+            with open(f'thread_id_data/{thread_id_copy}_dict.pkl', 'wb') as f:
+                pickle.dump(st.session_state.thread_id_dict, f)
 
 else:
 
