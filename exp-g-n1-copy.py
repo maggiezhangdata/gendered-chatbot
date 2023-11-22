@@ -29,6 +29,12 @@ assistant_id = st.secrets["assistant_id_n1_copy"]
 st.subheader("您的万能小助理")
 # create a avatr dict with key being female, male and assistant 
 
+
+import requests
+import json
+
+
+
 import random
 def sub_wuyan_with_qiyan(text):
     import re
@@ -107,6 +113,75 @@ import pickle
 # create a dict which key being thread_id and value being the session_state.messages 
 if "thread_id_dict" not in st.session_state:
     st.session_state.thread_id_dict = {thread_id_copy: []}
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def create_gist(token, filename, content, description=""):
+    """
+    Create a gist on GitHub.
+
+    Parameters:
+    token (str): GitHub personal access token.
+    filename (str): Name of the file to be created in the gist.
+    content (str): Content of the file.
+    description (str): Description of the gist.
+    """
+    url = "https://api.github.com/gists"
+    headers = {
+        "Authorization": f"token {token}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+    data = {
+        "files": {
+            filename: {
+                "content": content
+            }
+        },
+        "description": description,
+        "public": True  # Set to False if you want the gist to be private
+    }
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    if response.status_code == 201:
+        return response.json()['id']  # URL of the created gist
+    else:
+        raise Exception("Error creating gist: " + response.text)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+token = st.secrets["GITHUB_TOKEN"]
+initial_data = json.dumps(st.session_state.thread_id_dict, indent=4)
+gist_id = create_gist(token, thread_id_copy + "_dict.json", initial_data, "Initial Thread ID Data")
+
+
+def update_gist(token, gist_id, filename, content):
+    """
+    Update an existing gist on GitHub.
+
+    Parameters:
+    token (str): GitHub personal access token.
+    gist_id (str): The ID of the gist to update.
+    filename (str): The filename in the gist to update.
+    content (str): New content for the file.
+    """
+    url = f"https://api.github.com/gists/{gist_id}"
+    headers = {
+        "Authorization": f"token {token}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+    data = {
+        "files": {
+            filename: {
+                "content": content
+            }
+        }
+    }
+    response = requests.patch(url, headers=headers, data=json.dumps(data))
+    if response.status_code == 200:
+        return response.json()['html_url']  # URL of the updated gist
+    else:
+        raise Exception("Error updating gist: " + response.text)
+
+
+
+
 
 
 for message in st.session_state.messages:
@@ -248,9 +323,18 @@ if len(st.session_state.messages) < max_messages:
             st.session_state.thread_id_dict[thread_id_copy] +=[{"role": "original_response", "content": original_response}]
             
             # save to pickle file
-            with open(f'thread_id_data/{thread_id_copy}_dict.pkl', 'wb') as f:
-                pickle.dump(st.session_state.thread_id_dict, f)
-
+            # with open(f'thread_id_data/{thread_id_copy}_dict.pkl', 'wb') as f:
+            #     pickle.dump(st.session_state.thread_id_dict, f)
+            updated_data = json.dumps(st.session_state.thread_id_dict, indent=4)
+            try:
+                update_gist(token, gist_id, thread_id_copy+"_dict.json", updated_data)
+            except Exception as e:
+                print(f'update gist failed with {e}')
+            
+            
+            
+            
+            
 else:
 
     if user_input:= st.chat_input(""):
