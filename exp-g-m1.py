@@ -130,7 +130,7 @@ st.sidebar.info(st.session_state.thread_id)
 st.sidebar.caption("请复制上述对话编号。")
     
 # Handling message input and response
-max_messages = 50  # 10 iterations of conversation (user + assistant)
+max_messages = 30  # 10 iterations of conversation (user + assistant)
 
 
 def update_typing_animation(placeholder, current_dots):
