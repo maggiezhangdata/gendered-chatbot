@@ -62,7 +62,7 @@ def local_css(file_name):
 
 local_css("style.css")
 st.sidebar.markdown("<span style='color: #1F618D;'><strong>注意：<br> 五言绝句的格式要求为：每首诗由四句组成，每句五个字，总共二十个字。</strong></span><br><br>"
-                    "<span style='color: #1F618D;'><strong>七言绝句的格式要求为：每首诗由四句组成，每句七个字，共二十八个字。</strong></span><br><br>"
+                    # "<span style='color: #1F618D;'><strong>七言绝句的格式要求为：每首诗由四句组成，每句七个字，共二十八个字。</strong></span><br><br>"
                     "<hr style='height:0.1px;border-width:0;color:gray;background-color:gray'>", unsafe_allow_html=True)
 
 st.sidebar.markdown("#### 完成对话后，复制对话编号并粘贴至下方问卷的文本输入框中。\n:star: 请勿将其输入至聊天机器人对话页面。")
