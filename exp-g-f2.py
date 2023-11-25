@@ -134,47 +134,60 @@ if len(st.session_state.messages) < max_messages:
         st.session_state.first_message_sent = True
         st.session_state.messages.append({"role": "user", "content": user_input})
         
-        message = client.beta.threads.messages.create(
-                        thread_id=st.session_state.thread_id,
-                        role="user",
-                        content=user_input
-                    )
-
+        #============================================================================================================#  
         with st.chat_message("user"):
             # st.markdown(user_input)
             st.markdown("<span style='color: red;'>" + "您" + "：</span>" + user_input, unsafe_allow_html=True)
-            
-
+        
+        
         with st.chat_message("assistant", avatar=chatbot_avatar):
             message_placeholder = st.empty()
             waiting_message = st.empty()  # Create a new placeholder for the waiting message
+            dots = 0
+            
             for dots in range(0, 5):
-
                 dots = update_typing_animation(waiting_message, dots)  # Update typing animation
-                time.sleep(0.5) 
-
-            # Retrieve and display messages
+                time.sleep(0.2) 
             
-            
-
-            waiting_message.empty()
-            
-            import random
-            if len(st.session_state.messages) // 2 <= 1:
-                response = predefined_responses[(len(st.session_state.messages) // 2) - 1]
-            else:
-                response = random.choice(subsequent_responses)
-            message = client.beta.threads.messages.create(
-                        thread_id=st.session_state.thread_id,
-                        role="user",
-                        content=response
-                    )
-            message_placeholder.markdown("<span style='color: red;'>" + chatbot_name + "： </span><br>" + response, unsafe_allow_html=True)
-            st.session_state.messages.append(
-                {"role": "assistant", "content": response}
-            )
-            
-            
+        
+            import time
+            max_attempts = 2
+            attempt = 0
+            while attempt < max_attempts:
+                try:
+                    # raise Exception("test")    
+                    message = client.beta.threads.messages.create(thread_id=st.session_state.thread_id,role="user",content=user_input)
+                    import random
+                    if len(st.session_state.messages) // 2 <= 1:
+                        response = predefined_responses[(len(st.session_state.messages) // 2) - 1]
+                    else:
+                        response = random.choice(subsequent_responses)
+                    message = client.beta.threads.messages.create(
+                                thread_id=st.session_state.thread_id,
+                                role="user",
+                                content=response
+                            )
+                    waiting_message.empty()
+                    message_placeholder.markdown("<span style='color: red;'>" + chatbot_name + "： </span><br>" + response, unsafe_allow_html=True)
+                    st.session_state.messages.append({"role": "assistant", "content": response})
+                    break
+                except:
+                    attempt += 1
+                    if attempt < max_attempts:
+                        print(f"An error occurred. Retrying in 5 seconds...")
+                        time.sleep(3)
+                    else:
+                        error_message_html = """
+                            <div style='display: inline-block; border:2px solid red; padding: 4px; border-radius: 5px; margin-bottom: 20px; color: red;'>
+                                <strong>网络错误:</strong> 请重试。
+                            </div>
+                            """
+                        full_response = error_message_html
+                        waiting_message.empty()
+                        message_placeholder.markdown(full_response, unsafe_allow_html=True)
+                        st.session_state.messages.append({"role": "assistant", "content": full_response})
+        
+#============================================================================================================#  
 
 
         
