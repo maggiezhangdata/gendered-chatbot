@@ -35,6 +35,7 @@ import random
 def sub_wuyan_with_qiyan(text):
     # strip whitespaces from text
     text = text.replace(" ", "")
+    text = text.replace("\n", "")
     
     import re
     def regex_replace_five_word_poem(poem, pool):

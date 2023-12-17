@@ -38,6 +38,7 @@ import random
 def sub_wuyan_with_qiyan(text):
     # strip whitespaces from text
     text = text.replace(" ", "")
+    text = text.replace("\n", "")
     
     import re
     def regex_replace_five_word_poem(poem, pool):
@@ -219,7 +220,9 @@ if len(st.session_state.messages) < max_messages:
 
             #**********************************************************
             original_response = full_response
+            print("original_response: ", original_response)
             full_response = sub_wuyan_with_qiyan(full_response)
+            print("full_response: ", full_response)
             try:
                 message = client.beta.threads.messages.create(
                             thread_id=st.session_state.thread_id,
