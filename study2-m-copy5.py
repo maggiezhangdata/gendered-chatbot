@@ -5,7 +5,7 @@ import re  # Import regular expressions
 
 avatar_dict = {
     "female":"https://ooo.0x0.ooo/2023/11/21/OrFWZL.png",
-    "male":"https://ooo.0x0.ooo/2023/11/21/OrFbci.png",
+    "male":"https://ooo.0x0.ooo/2023/12/18/OKUk71.jpg",
     "no-gender": "https://ooo.0x0.ooo/2023/11/21/OrFUBC.png"
 }
 
