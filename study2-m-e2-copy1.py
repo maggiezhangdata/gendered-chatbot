@@ -25,7 +25,7 @@ task = failure_dict['2']
 chatbot_avatar = avatar_dict['male']
 chatbot_name = name_dict['male']
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-assistant_id = st.secrets["assistant_id_m2"]
+assistant_id = st.secrets["assistant_id_m0"]
 st.subheader("您的万能小助理"+chatbot_name)
 max_messages = 30  # 10 iterations of conversation (user + assistant)
 # create a avatr dict with key being female, male and assistant 
